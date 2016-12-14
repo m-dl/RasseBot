@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">RasseBot</string>
     <string name="action_settings">Settings</string>
+    <string name="speech_not_supported">L\'appareil ne supporte pas le système de commandes vocales.</string>
+    <string name="speech_prompt">Quelle est votre commande ?</string>
+
 </resources>
