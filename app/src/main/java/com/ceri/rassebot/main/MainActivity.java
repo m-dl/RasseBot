@@ -78,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 int width = stream.getWidth();
                 int height = stream.getHeight();
-                stream.loadUrl(preferences.getString(Tools.IP, Tools.DEFAULT_IP) + ":" +
-                        preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT) +
-                        "/?width=" + width + "&height=" + height);
+                stream.loadUrl(Tools.HTTP + preferences.getString(Tools.IP, Tools.DEFAULT_IP) +
+                        Tools.PORT_SEPARATOR + preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT) +
+                        Tools.STREAM_HTTP + Tools.WIDTH_HTTP + width + Tools.HEIGHT_HTTP + height);
             }
         });
 

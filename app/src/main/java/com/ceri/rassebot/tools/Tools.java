@@ -9,6 +9,7 @@ import com.ceri.rassebot.main.MainActivity;
 public class Tools {
 
     public final static String OPTIONS = "OPTIONS", IP = "IP", PORT = "PORT", SPEED = "SPEED";
+    public final static String HTTP = "http://", PORT_SEPARATOR = ":", STREAM_HTTP = "/stream", WIDTH_HTTP = "?width=", HEIGHT_HTTP = "&height=";
     public final static String DEFAULT_IP = "192.168.1.254";
     public final static int DEFAULT_PORT = 8080, DEFAULT_SPEED = 1;
 

@@ -41,8 +41,7 @@
                 android:textColor="@color/white"
                 android:textSize="14dp"
                 android:imeOptions="actionDone"
-                android:digits="0123456789."
-                android:inputType="numberDecimal"
+                android:inputType="text"
                 android:backgroundTint="@color/colorAccent"
                 android:lines="1"
                 android:minLines="1" />
