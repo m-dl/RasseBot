@@ -3,7 +3,6 @@
     package="com.ceri.rassebot">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
@@ -24,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".options.OptionsActivity"
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".socket.Client"

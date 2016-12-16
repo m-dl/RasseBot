@@ -8,6 +8,11 @@ import com.ceri.rassebot.main.MainActivity;
 
 public class Tools {
 
+    public final static String OPTIONS = "OPTIONS", IP = "IP", PORT = "PORT", SPEED = "SPEED";
+    public final static String DEFAULT_IP = "192.168.1.254";
+    public final static int DEFAULT_PORT = 8080, DEFAULT_SPEED = 1;
+
+
     // display toast message
     public static void notifToast(String s) {
         Toast.makeText(MainActivity.getContext(), s, Toast.LENGTH_SHORT).show();

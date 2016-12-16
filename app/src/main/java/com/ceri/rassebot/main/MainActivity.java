@@ -4,28 +4,22 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.ceri.rassebot.R;
-import com.ceri.rassebot.socket.Client;
+import com.ceri.rassebot.options.OptionsActivity;
+import com.ceri.rassebot.tools.ScreenParam;
 import com.ceri.rassebot.tools.Tools;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -34,12 +28,18 @@ import io.github.controlwear.virtual.joystick.android.JoystickView;
 public class MainActivity extends AppCompatActivity {
 
     private final int REQ_CODE_SPEECH_INPUT = 100;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
 
     public static Activity m_Activity;
     private static MainActivity instance;
+    private ScreenParam param;
+    TextToSpeech textToSpeech;
     private TextView textview;
-    private FloatingActionButton mail, mic;
+    private FloatingActionButton options, mic;
     private JoystickView joystickRobot, joystickCamera;
+    private WebView stream;
+    private int defaultZoomLevel = 100;
 
     // Constructor
     public MainActivity() {
@@ -58,31 +58,44 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        param = new ScreenParam();
+        param.paramWindowFullScreen(getWindow());
+
+        preferences = getSharedPreferences(Tools.OPTIONS, MODE_PRIVATE);
+        editor = preferences.edit();
 
         m_Activity = MainActivity.this;
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         textview = (TextView) findViewById(R.id.textview);
+        stream = (WebView) findViewById(R.id.stream);
+        stream.setInitialScale(defaultZoomLevel);
+
+        // Get the width and height of the view because its different for different phone or table layouts
+        // Pass these values to the URL in the web view to display the HTTP stream
+        stream.post(new Runnable()
+        {
+            @Override
+            public void run() {
+                int width = stream.getWidth();
+                int height = stream.getHeight();
+                stream.loadUrl(preferences.getString(Tools.IP, Tools.DEFAULT_IP) + "?width="+width+"&height="+height);
+            }
+        });
 
         mic = (FloatingActionButton) findViewById(R.id.mic);
         mic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 promptSpeechInput();
-
             }
         });
 
-        mail = (FloatingActionButton) findViewById(R.id.mail);
-        mail.setOnClickListener(new View.OnClickListener() {
+        options = (FloatingActionButton) findViewById(R.id.options);
+        options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Tools.notifBar(view, "Replace with your own action");
-                Intent intent = new Intent(m_Activity, Client.class);
+                Intent intent = new Intent(m_Activity, OptionsActivity.class);
                 ActivityCompat.startActivity(m_Activity, intent, null);
-
             }
         });
 
@@ -101,28 +114,16 @@ public class MainActivity extends AppCompatActivity {
                 textview.setText("Caméra: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
             }
         });
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        textToSpeech = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(Locale.FRANCE);
+                    textToSpeech.speak(getString(R.string.welcome), TextToSpeech.QUEUE_FLUSH, null, null);
+                }
+            }
+        });
     }
 
     /**

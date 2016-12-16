@@ -3,5 +3,13 @@
     <string name="action_settings">Settings</string>
     <string name="speech_not_supported">L\'appareil ne supporte pas le système de commandes vocales.</string>
     <string name="speech_prompt">Quelle est votre commande ?</string>
+    <string name="erreur_config">Vous devez remplir tous les champs pour vous connecter au robot !</string>
+
+    <string name="valider">Valider</string>
+    <string name="ip">Adresse IP</string>
+    <string name="port">Port</string>
+    <string name="speed">Vitesse du robot</string>
+
+    <string name="welcome">Bonjour Maxime et Adrian, je suis Rasse Bote le roi des Rasse</string>
 
 </resources>
