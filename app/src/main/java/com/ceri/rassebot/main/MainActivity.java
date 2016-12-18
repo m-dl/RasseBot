@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebView;
@@ -29,6 +28,7 @@ import io.github.controlwear.virtual.joystick.android.JoystickView;
 public class MainActivity extends AppCompatActivity {
 
     private final int REQ_CODE_SPEECH_INPUT = 100;
+    private final int REQ_CODE_OPTIONS = 200;
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
 
@@ -60,21 +60,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // full screen design
         param = new ScreenParam();
         param.paramWindowFullScreen(getWindow());
 
+        // preferences data
         preferences = getSharedPreferences(Tools.OPTIONS, MODE_PRIVATE);
         editor = preferences.edit();
 
         m_Activity = MainActivity.this;
+        // socket connection
         client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT));
 
         textview = (TextView) findViewById(R.id.textview);
+
+        // webview to show robot camera stream
         stream = (WebView) findViewById(R.id.stream);
         stream.setInitialScale(defaultZoomLevel);
-
-        // Get the width and height of the view because its different for different phone or table layouts
-        // Pass these values to the URL in the web view to display the HTTP stream
         stream.post(new Runnable()
         {
             @Override
@@ -83,10 +85,11 @@ public class MainActivity extends AppCompatActivity {
                 int height = stream.getHeight();
                 stream.loadUrl(Tools.HTTP + preferences.getString(Tools.IP, Tools.DEFAULT_IP) +
                         Tools.PORT_SEPARATOR + preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT) +
-                        Tools.STREAM_HTTP + Tools.WIDTH_HTTP + width + Tools.HEIGHT_HTTP + height);
+                        Tools.STREAM_HTTP + Tools.WIDTH_HTTP + width + Tools.HEIGHT_HTTP + height); // TODO: margin webview a fixer cadre blanc
             }
         });
 
+        // control system with user voice
         mic = (FloatingActionButton) findViewById(R.id.mic);
         mic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,33 +98,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // options activity
         options = (FloatingActionButton) findViewById(R.id.options);
         options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(m_Activity, OptionsActivity.class);
-                ActivityCompat.startActivity(m_Activity, intent, null);
+                startActivityForResult(intent, REQ_CODE_OPTIONS);
             }
         });
 
+        // control robot
         joystickRobot = (JoystickView) findViewById(R.id.joystick_robot);
         joystickRobot.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
                 textview.setText("Robot: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
-                client.sendCommand(Client.ROBOT + " direction");
+                String command = Tools.angleToDirection(angle);
+                if(command != null)
+                    client.sendCommand(Client.ROBOT + " " + command);
             }
         });
 
+        // control camera
         joystickCamera = (JoystickView) findViewById(R.id.joystick_camera);
         joystickCamera.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
                 textview.setText("Caméra: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
-                client.sendCommand(Client.CAMERA + " direction");
+                String command = Tools.angleToBidirection(angle);
+                if(command != null)
+                    client.sendCommand(Client.CAMERA + " " + command);
             }
         });
 
+        // vocal application
         textToSpeech = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -156,10 +167,34 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
+            // vocal command activity result
             case REQ_CODE_SPEECH_INPUT: {
                 if (resultCode == RESULT_OK && null != data) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    Tools.notifToast(result.get(0));
+                    String command = Tools.treatVocalCommand(result.get(0));
+                    Tools.notifToast(command);
+                    // if no command, tell user, else send it
+                    if(command != null)
+                        client.sendCommand(command);
+                    else
+                        textToSpeech.speak(getString(R.string.erreur_commande_inconnue), TextToSpeech.QUEUE_FLUSH, null, null);
+                }
+                break;
+            }
+            // options activity result
+            case REQ_CODE_OPTIONS: {
+                if (resultCode == RESULT_OK && null != data) {
+                     if(data.getBooleanExtra(OptionsActivity.SERVER_FLAG, false)) {
+                         // creat new socket connection if server has changed
+                         client.stopSocket();
+                         client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT));
+                         // reload webview
+                         int width = stream.getWidth();
+                         int height = stream.getHeight();
+                         stream.loadUrl(Tools.HTTP + preferences.getString(Tools.IP, Tools.DEFAULT_IP) +
+                                 Tools.PORT_SEPARATOR + preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT) +
+                                 Tools.STREAM_HTTP + Tools.WIDTH_HTTP + width + Tools.HEIGHT_HTTP + height);
+                    }
                 }
                 break;
             }

@@ -4,6 +4,7 @@
     <string name="speech_not_supported">L\'appareil ne supporte pas le système de commandes vocales.</string>
     <string name="speech_prompt">Quelle est votre commande ?</string>
     <string name="erreur_config">Vous devez remplir tous les champs !</string>
+    <string name="erreur_commande_inconnue">Je n\'ai pas compris votre commande veuillez répéter.</string>
 
     <string name="valider">Valider</string>
     <string name="ip">Adresse IP</string>

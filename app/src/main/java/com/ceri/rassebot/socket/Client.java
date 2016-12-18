@@ -15,7 +15,8 @@ public class Client {
     private int port;
 
     public final static String GAUCHE = "gauche", DROITE = "droite", HAUT = "haut", BAS = "bas",
-    ROBOT = "robot", CAMERA = "camera";
+    ROBOT = "robot", CAMERA = "caméra", AVANCE = "avance", RECULE = "recule", ARRIERE= "arrière", STOP = "stop",
+    ACCELERE = "accélère", RALENTIS = "ralentis", CENTRE = "centre", MILIEU = "milieu";
 
     public Client(String ip, int port) {
         this.ip = ip;
@@ -23,10 +24,13 @@ public class Client {
         new Thread(new ClientThread()).start();
     }
 
+    // send command to the server (robot)
     public void sendCommand(String command) {
         try {
-            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-            out.println(command);
+            if (socket != null) {
+                PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                out.println(command);
+            }
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -36,6 +40,18 @@ public class Client {
         }
     }
 
+    // stop socket connection
+    public void stopSocket() {
+        try {
+            if (socket != null) {
+                this.socket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // start connection
     class ClientThread implements Runnable {
         @Override
         public void run() {
