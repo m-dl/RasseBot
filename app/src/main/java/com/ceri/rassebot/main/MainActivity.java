@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.ceri.rassebot.R;
 import com.ceri.rassebot.options.OptionsActivity;
+import com.ceri.rassebot.socket.Client;
 import com.ceri.rassebot.tools.ScreenParam;
 import com.ceri.rassebot.tools.Tools;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private JoystickView joystickRobot, joystickCamera;
     private WebView stream;
     private int defaultZoomLevel = 100;
+    private Client client;
 
     // Constructor
     public MainActivity() {
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         editor = preferences.edit();
 
         m_Activity = MainActivity.this;
+        client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT));
 
         textview = (TextView) findViewById(R.id.textview);
         stream = (WebView) findViewById(R.id.stream);
@@ -106,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMove(int angle, int strength) {
                 textview.setText("Robot: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
+                client.sendCommand(Client.ROBOT + " direction");
             }
         });
 
@@ -114,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMove(int angle, int strength) {
                 textview.setText("Caméra: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
+                client.sendCommand(Client.CAMERA + " direction");
             }
         });
 
@@ -122,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR) {
                     textToSpeech.setLanguage(Locale.FRANCE);
-                    textToSpeech.speak(getString(R.string.welcome), TextToSpeech.QUEUE_FLUSH, null, null);
+                    textToSpeech.speak(preferences.getString(Tools.WELCOME, Tools.DEFAULT_WELCOME), TextToSpeech.QUEUE_FLUSH, null, null);
                 }
             }
         });

@@ -27,10 +27,6 @@
         <activity
             android:name=".options.OptionsActivity"
             android:screenOrientation="sensorLandscape" />
-
-        <activity
-            android:name=".socket.Client"
-            android:screenOrientation="sensorLandscape" />
     </application>
 
 </manifest>
