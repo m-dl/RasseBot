@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         m_Activity = MainActivity.this;
         // socket connection
-        client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT));
+        client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT));
 
         textview = (TextView) findViewById(R.id.textview);
 
@@ -81,11 +81,11 @@ public class MainActivity extends AppCompatActivity {
         {
             @Override
             public void run() {
-                int width = stream.getWidth();
-                int height = stream.getHeight();
+                int width = stream.getWidth()-5; // html margin glitch
+                int height = stream.getHeight()-20; // html margin glitch
                 stream.loadUrl(Tools.HTTP + preferences.getString(Tools.IP, Tools.DEFAULT_IP) +
                         Tools.PORT_SEPARATOR + preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT) +
-                        Tools.STREAM_HTTP + Tools.WIDTH_HTTP + width + Tools.HEIGHT_HTTP + height); // TODO: margin webview a fixer cadre blanc
+                        Tools.STREAM_HTTP + Tools.WIDTH_HTTP + width + Tools.HEIGHT_HTTP + height);
             }
         });
 
@@ -187,10 +187,10 @@ public class MainActivity extends AppCompatActivity {
                      if(data.getBooleanExtra(OptionsActivity.SERVER_FLAG, false)) {
                          // creat new socket connection if server has changed
                          client.stopSocket();
-                         client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT));
+                         client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT));
                          // reload webview
-                         int width = stream.getWidth();
-                         int height = stream.getHeight();
+                         int width = stream.getWidth()-5; // html margin glitch
+                         int height = stream.getHeight()-20; // html margin glitch
                          stream.loadUrl(Tools.HTTP + preferences.getString(Tools.IP, Tools.DEFAULT_IP) +
                                  Tools.PORT_SEPARATOR + preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT) +
                                  Tools.STREAM_HTTP + Tools.WIDTH_HTTP + width + Tools.HEIGHT_HTTP + height);

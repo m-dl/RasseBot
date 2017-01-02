@@ -56,7 +56,7 @@
 
             <TextView
                 android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="@string/port"
                 android:id="@+id/port_text"
                 android:layout_alignParentStart="true"
@@ -68,6 +68,40 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/port"
+                android:layout_marginLeft="16dp"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:imeOptions="actionDone"
+                android:digits="0123456789"
+                android:inputType="numberDecimal"
+                android:backgroundTint="@color/colorAccent"
+                android:lines="1"
+                android:maxLines="1"
+                android:minLines="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:text="@string/socket_port"
+                android:id="@+id/socket_port_text"
+                android:layout_alignParentStart="true"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:gravity="bottom|center|center_horizontal" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/socket_port"
                 android:layout_marginLeft="16dp"
                 android:textColor="@color/white"
                 android:textSize="14dp"
@@ -148,13 +182,13 @@
 
         </LinearLayout>
 
-        <Button android:id="@+id/valider"
+        <Button
+            android:id="@+id/valider"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:textColor="@color/white"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="24dp"
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
             android:paddingRight="10dp"
