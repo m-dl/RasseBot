@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         // socket connection
         client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT));
         // send default robot speed
+        //client.sendCommand(Client.SPEED + " " + preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED));
         client.sendCommand(Client.SPEED + " " + preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED));
 
         textview = (TextView) findViewById(R.id.textview);
@@ -120,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMove(int angle, int strength) {
                 textview.setText("Robot: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
-                String command = Tools.angleToDirection(angle);
-                if(command != null)
-                    client.sendCommand(Client.ROBOT + " " + command);
+                //String command = Tools.angleToDirection(angle);
+                //if(command != null)
+                    client.sendCommand(Client.ROBOT + " " + angle + " " + strength);
             }
         });
 
@@ -193,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && null != data) {
                      if(data.getBooleanExtra(OptionsActivity.SERVER_FLAG, false)) {
                          // creat new socket connection if server has changed
-                         client.stopSocket();
+                         //client.stopSocket();
                          client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT));
                          // reload webview
                          int width = stream.getWidth()-5; // html margin glitch
