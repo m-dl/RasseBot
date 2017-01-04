@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
@@ -27,6 +28,7 @@ import io.github.controlwear.virtual.joystick.android.JoystickView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final static String FORCED_VOICE_LANGUAGE = "fr-FR";
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private final int REQ_CODE_OPTIONS = 200;
     private SharedPreferences preferences;
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public static Activity m_Activity;
     private static MainActivity instance;
     private ScreenParam param;
-    TextToSpeech textToSpeech;
+    public static TextToSpeech textToSpeech;
     private TextView textview;
     private FloatingActionButton options, mic;
     private JoystickView joystickRobot, joystickCamera;
@@ -59,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //TODO: faire async task socket
         setContentView(R.layout.activity_main);
         // full screen design
         param = new ScreenParam();
@@ -71,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         m_Activity = MainActivity.this;
         // socket connection
         client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT));
+        // send default robot speed
+        client.sendCommand(Client.SPEED + " " + preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED));
 
         textview = (TextView) findViewById(R.id.textview);
 
@@ -126,9 +132,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMove(int angle, int strength) {
                 textview.setText("Caméra: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
-                String command = Tools.angleToBidirection(angle);
-                if(command != null)
-                    client.sendCommand(Client.CAMERA + " " + command);
+//                String command = Tools.angleToBidirection(angle);
+//                if(command != null)
+                    client.sendCommand(Client.CAMERA + " " + angle + " " + strength);
             }
         });
 
@@ -149,8 +155,9 @@ public class MainActivity extends AppCompatActivity {
      * */
     private void promptSpeechInput() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, FORCED_VOICE_LANGUAGE);
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speech_prompt));
         try {
             startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
