@@ -67,6 +67,10 @@ public class OptionsActivity extends AppCompatActivity {
                                 port.setText("65535");
                             if(Integer.parseInt(socketPort.getText().toString()) > 65535)
                                 socketPort.setText("65535");
+                            if(Integer.parseInt(speed.getText().toString()) < 1)
+                                speed.setText("1");
+                            if(Integer.parseInt(speed.getText().toString()) > 100)
+                                speed.setText("100");
 
                             // save preferences
                             editor.putString(Tools.IP, ip.getText().toString());

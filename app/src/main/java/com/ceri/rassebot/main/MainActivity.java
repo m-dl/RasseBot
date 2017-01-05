@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //TODO: faire async task socket
         setContentView(R.layout.activity_main);
         // full screen design
         param = new ScreenParam();
@@ -74,10 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
         m_Activity = MainActivity.this;
         // socket connection
-        client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT));
-        // send default robot speed
-        //client.sendCommand(Client.SPEED + " " + preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED));
-        client.sendCommand(Client.SPEED + " " + preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED));
+        client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT),
+                preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED));
 
         textview = (TextView) findViewById(R.id.textview);
 
@@ -121,9 +118,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMove(int angle, int strength) {
                 textview.setText("Robot: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
-                //String command = Tools.angleToDirection(angle);
-                //if(command != null)
-                    client.sendCommand(Client.ROBOT + " " + angle + " " + strength);
+                client.sendCommand(Client.ROBOT + " " + angle + " " + strength);
             }
         });
 
@@ -133,9 +128,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMove(int angle, int strength) {
                 textview.setText("Caméra: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
-//                String command = Tools.angleToBidirection(angle);
-//                if(command != null)
-                    client.sendCommand(Client.CAMERA + " " + angle + " " + strength);
+                client.sendCommand(Client.CAMERA + " " + angle + " " + strength);
             }
         });
 
@@ -194,8 +187,9 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && null != data) {
                      if(data.getBooleanExtra(OptionsActivity.SERVER_FLAG, false)) {
                          // creat new socket connection if server has changed
-                         //client.stopSocket();
-                         client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT));
+                         client.stopSocket();
+                         client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT),
+                                 preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED));
                          // reload webview
                          int width = stream.getWidth()-5; // html margin glitch
                          int height = stream.getHeight()-20; // html margin glitch

@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.speech.tts.TextToSpeech;
 
 import com.ceri.rassebot.main.MainActivity;
+import com.ceri.rassebot.tools.Tools;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,10 +26,11 @@ public class Client {
             ROBOT = "robot", CAMERA = "camera", AVANCE = "avance", RECULE = "recule", ARRIERE = "arriere", STOP = "stop",
             ACCELERE = "accelere", RALENTIS = "ralentis", CENTRE = "centre", MILIEU = "milieu", SPEED = "speed";
 
-    public Client(String ip, int port) {
+    public Client(String ip, int port, int speed) {
         this.ip = ip;
         this.port = port;
-        //new Thread(new ClientThread()).start();
+        // send default robot speed
+        sendCommand(Client.SPEED + " " + speed);
     }
 
     // send command to the server (robot)
@@ -36,56 +38,22 @@ public class Client {
         new SocketClient().execute(command);
     }
 
-//    // send command to the server (robot)
-//    public void sendCommand(String command) {
-//        try {
-//            if (socket != null) {
-//                PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-//                out.println(command);
-//                out.flush();
-//                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//                String response = in.readLine();
-//                System.out.println(response);
-//                //MainActivity.textToSpeech.speak(response, TextToSpeech.QUEUE_ADD, null, null);
-//            }
-//        } catch (UnknownHostException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    // stop socket connection
-//    public void stopSocket() {
-//        try {
-//            if (socket != null) {
-//                this.socket.close();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    // start connection
-//    class ClientThread implements Runnable {
-//        @Override
-//        public void run() {
-//            try {
-//                InetAddress serverAddr = InetAddress.getByName(ip);
-//                socket = new Socket(serverAddr, port);
-//            } catch (UnknownHostException e1) {
-//                e1.printStackTrace();
-//            } catch (IOException e1) {
-//                e1.printStackTrace();
-//            }
-//        }
-//    }
+    // stop socket connection
+    public void stopSocket() {
+        try {
+            if (socket != null) {
+                this.socket.close();
+                this.socket = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public class SocketClient extends AsyncTask<String, Void, String> {
 
         protected String doInBackground(String... args) {
+            String response = "";
             if(socket == null) {
                 try {
                     InetAddress serverAddr = InetAddress.getByName(ip);
@@ -102,33 +70,22 @@ public class Client {
                 out.println(args[0]);
                 out.flush();
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                String response = in.readLine();
-                System.out.println("response: " + response);
-                //MainActivity.textToSpeech.speak(response, TextToSpeech.QUEUE_ADD, null, null);
+                response = in.readLine();
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
-//            } finally {
-//                if (socket != null) {
-//                    try {
-//                        socket.close();
-//                    } catch (IOException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                    }
-//                }
             }
 
-            return null;//returns what you want to pass to the onPostExecute()
+            return response;
         }
 
         protected void onPostExecute(String result) {
-            //resultis the data returned from doInbackground
-
-            if (result != null) {
+            System.out.println("response: " + result);
+            if (!result.equals("")) {
+                MainActivity.textToSpeech.speak(result, TextToSpeech.QUEUE_ADD, null, null);
             }
         }
     }
