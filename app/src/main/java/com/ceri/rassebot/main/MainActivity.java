@@ -112,6 +112,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // TODO: temp debug
+        options.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                client.stopSocket();
+                Tools.notifToast("Socket coupé sur l'appli android");
+                return false;
+            }
+        });
+        // ********
+        // ***
+
         // control robot
         joystickRobot = (JoystickView) findViewById(R.id.joystick_robot);
         joystickRobot.setOnMoveListener(new JoystickView.OnMoveListener() {

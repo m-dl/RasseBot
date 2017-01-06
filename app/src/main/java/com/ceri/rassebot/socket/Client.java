@@ -84,7 +84,7 @@ public class Client {
 
         protected void onPostExecute(String result) {
             System.out.println("response: " + result);
-            if (!result.equals("")) {
+            if (result != null && !result.equals("")) {
                 MainActivity.textToSpeech.speak(result, TextToSpeech.QUEUE_ADD, null, null);
             }
         }
