@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 textview.setText("Robot: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
                 client.sendCommand(Client.ROBOT + " " + angle + " " + strength);
             }
-        });
+        }, 1000);
 
         // control camera
         joystickCamera = (JoystickView) findViewById(R.id.joystick_camera);
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 textview.setText("Caméra: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
                 client.sendCommand(Client.CAMERA + " " + angle + " " + strength);
             }
-        });
+        }, 1000);
 
         // vocal application
         textToSpeech = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {

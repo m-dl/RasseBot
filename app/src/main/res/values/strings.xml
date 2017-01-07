@@ -10,7 +10,7 @@
     <string name="ip">Adresse IP</string>
     <string name="port">Port du stream caméra</string>
     <string name="socket_port">Port du serveur socket</string>
-    <string name="speed">Vitesse du robot</string>
+    <string name="speed">Vitesse du robot (entre 1 et 100)</string>
     <string name="welcome">Message de bienvenue</string>
 
 </resources>
