@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.speech.tts.TextToSpeech;
 
 import com.ceri.rassebot.main.MainActivity;
-import com.ceri.rassebot.tools.Tools;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -23,8 +22,8 @@ public class Client {
     private int port;
 
     public final static String GAUCHE = "gauche", DROITE = "droite",
-            ROBOT = "robot", CAMERA = "camera", AVANCE = "avance", RECULE = "recule", ARRIERE = "arriere", STOP = "stop",
-            ACCELERE = "accelere", RALENTIS = "ralentis", SPEED = "speed";
+            ROBOT = "robot", CAMERA = "camera", CAMERA2 = "caméra", AVANCE = "avance", RECULE = "recule", RECULE2 = "recul", ARRIERE = "arrière", STOP = "stop",
+            ACCELERE = "accelere", ACCELERE2 = "accélère", RALENTIS = "ralentis", RALENTIS2 = "ralenti", SPEED = "speed";
 
     public Client(String ip, int port, int speed) {
         this.ip = ip;

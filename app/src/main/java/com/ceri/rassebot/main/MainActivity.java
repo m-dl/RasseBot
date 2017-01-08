@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
@@ -174,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && null != data) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String command = Tools.treatVocalCommand(result.get(0));
-                    Tools.notifToast(command);
+                    Tools.notifToast("Commande reçue : " + result.get(0) + " - Commande envoyée : " + command);
                     // if no command, tell user, else send it
                     if(command != null && !command.equals(""))
                         client.sendCommand(command);

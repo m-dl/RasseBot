@@ -16,7 +16,7 @@ public class Tools {
 
     // display toast message
     public static void notifToast(String s) {
-        Toast.makeText(MainActivity.getContext(), s, Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.getContext(), s, Toast.LENGTH_LONG).show();
     }
 
     // display snackbar message
@@ -27,18 +27,18 @@ public class Tools {
     // treat vocal command
     public static String treatVocalCommand(String request) {
         // camera - first to treat or there is robot command conflict
-        if(request.contains(Client.CAMERA) && request.contains(Client.GAUCHE))
+        if(request.contains(Client.CAMERA2) && request.contains(Client.GAUCHE))
             return Client.CAMERA + " " + Client.GAUCHE;
-        else if(request.contains(Client.CAMERA) && request.contains(Client.DROITE))
+        else if(request.contains(Client.CAMERA2) && request.contains(Client.DROITE))
             return Client.CAMERA + " " + Client.DROITE;
         // robot
         else if(request.contains(Client.AVANCE))
             return Client.ROBOT + " " + Client.AVANCE;
-        else if(request.contains(Client.ACCELERE))
+        else if(request.contains(Client.ACCELERE2))
             return Client.ROBOT + " " + Client.ACCELERE;
-        else if(request.contains(Client.RALENTIS))
+        else if(request.contains(Client.RALENTIS2))
             return Client.ROBOT + " " + Client.RALENTIS;
-        else if(request.contains(Client.RECULE) || request.contains(Client.ARRIERE))
+        else if(request.contains(Client.RECULE2) || request.contains(Client.ARRIERE))
             return Client.ROBOT + " " + Client.RECULE;
         else if(request.contains(Client.STOP))
             return Client.ROBOT + " " + Client.STOP;
