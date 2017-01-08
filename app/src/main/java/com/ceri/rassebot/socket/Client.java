@@ -22,9 +22,9 @@ public class Client {
     private String ip;
     private int port;
 
-    public final static String GAUCHE = "gauche", DROITE = "droite", HAUT = "haut", BAS = "bas",
+    public final static String GAUCHE = "gauche", DROITE = "droite",
             ROBOT = "robot", CAMERA = "camera", AVANCE = "avance", RECULE = "recule", ARRIERE = "arriere", STOP = "stop",
-            ACCELERE = "accelere", RALENTIS = "ralentis", CENTRE = "centre", MILIEU = "milieu", SPEED = "speed";
+            ACCELERE = "accelere", RALENTIS = "ralentis", SPEED = "speed";
 
     public Client(String ip, int port, int speed) {
         this.ip = ip;

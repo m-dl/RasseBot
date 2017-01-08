@@ -112,17 +112,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: temp debug
-        options.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                client.stopSocket();
-                Tools.notifToast("Socket coupé sur l'appli android");
-                return false;
-            }
-        });
-        // ********
-        // ***
 
         // control robot
         joystickRobot = (JoystickView) findViewById(R.id.joystick_robot);
@@ -187,10 +176,10 @@ public class MainActivity extends AppCompatActivity {
                     String command = Tools.treatVocalCommand(result.get(0));
                     Tools.notifToast(command);
                     // if no command, tell user, else send it
-                    if(command != null)
+                    if(command != null && !command.equals(""))
                         client.sendCommand(command);
                     else
-                        textToSpeech.speak(getString(R.string.erreur_commande_inconnue), TextToSpeech.QUEUE_FLUSH, null, null);
+                        textToSpeech.speak(getString(R.string.erreur_commande_inconnue), TextToSpeech.QUEUE_ADD, null, null);
                 }
                 break;
             }
