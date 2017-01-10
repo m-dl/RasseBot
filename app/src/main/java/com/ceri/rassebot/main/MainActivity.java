@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // control robot
         joystickRobot = (JoystickView) findViewById(R.id.joystick_robot);
         joystickRobot.setOnMoveListener(new JoystickView.OnMoveListener() {
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             public void onMove(int angle, int strength) {
                 client.sendCommand(Client.ROBOT + " " + angle + " " + strength);
             }
-        }, 500);
+        }, 1000);
 
         // control camera
         joystickCamera = (JoystickView) findViewById(R.id.joystick_camera);
@@ -125,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             public void onMove(int angle, int strength) {
                 client.sendCommand(Client.CAMERA + " " + angle + " " + strength);
             }
-        }, 500);
+        }, 1000);
 
         // vocal application
         textToSpeech = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
@@ -137,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // receive socket data permanently
+        client.receiveCommand();
     }
 
     /**
