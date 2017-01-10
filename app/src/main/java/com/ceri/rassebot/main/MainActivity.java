@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private static MainActivity instance;
     private ScreenParam param;
     public static TextToSpeech textToSpeech;
-    private TextView textview;
     private FloatingActionButton options, mic;
     private JoystickView joystickRobot, joystickCamera;
     private WebView stream;
@@ -74,8 +73,6 @@ public class MainActivity extends AppCompatActivity {
         // socket connection
         client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT),
                 preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED));
-
-        textview = (TextView) findViewById(R.id.textview);
 
         // webview to show robot camera stream
         stream = (WebView) findViewById(R.id.stream);
@@ -117,20 +114,18 @@ public class MainActivity extends AppCompatActivity {
         joystickRobot.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
-                textview.setText("Robot: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
                 client.sendCommand(Client.ROBOT + " " + angle + " " + strength);
             }
-        }, 1000);
+        }, 500);
 
         // control camera
         joystickCamera = (JoystickView) findViewById(R.id.joystick_camera);
         joystickCamera.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
-                textview.setText("Caméra: " + String.valueOf(angle) + "° et " + String.valueOf(strength) + "%");
                 client.sendCommand(Client.CAMERA + " " + angle + " " + strength);
             }
-        }, 1000);
+        }, 500);
 
         // vocal application
         textToSpeech = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
