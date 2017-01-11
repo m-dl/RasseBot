@@ -20,6 +20,7 @@ public class ClientReceiver {
     private Socket socket;
     private String ip;
     private int port;
+    private String message;
 
     public ClientReceiver(String ip, int port) {
         this.ip = ip;
@@ -29,6 +30,7 @@ public class ClientReceiver {
 
     // receive command from the server (robot) - opencv objects
     public void receiveCommand() {
+
         new SocketClient().execute();
     }
 
@@ -44,9 +46,27 @@ public class ClientReceiver {
         }
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public class SocketClient extends AsyncTask<Void, Void, String> {
 
         protected String doInBackground(Void... args) {
+
+            new Thread(new Runnable() {
+                public void run() {
+                    runListener();
+                }
+            }).start();
+            return getMessage();
+        }
+
+        public void runListener() {
             String response = "";
             if(socket == null) {
                 try {
@@ -75,7 +95,9 @@ public class ClientReceiver {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return response;
+
+            setMessage(response);
+
         }
 
         protected void onPostExecute(String result) {
