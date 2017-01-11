@@ -12,11 +12,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.TextView;
 
 import com.ceri.rassebot.R;
 import com.ceri.rassebot.options.OptionsActivity;
-import com.ceri.rassebot.socket.Client;
+import com.ceri.rassebot.socket.ClientReceiver;
+import com.ceri.rassebot.socket.ClientSender;
 import com.ceri.rassebot.tools.ScreenParam;
 import com.ceri.rassebot.tools.Tools;
 
@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private JoystickView joystickRobot, joystickCamera;
     private WebView stream;
     private int defaultZoomLevel = 100;
-    private Client client;
+    private ClientSender clientSender;
+    private ClientReceiver clientReceiver;
 
     // Constructor
     public MainActivity() {
@@ -71,8 +72,10 @@ public class MainActivity extends AppCompatActivity {
 
         m_Activity = MainActivity.this;
         // socket connection
-        client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT),
+        clientSender = new ClientSender(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_SENDER_PORT),
                 preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED));
+        // receive socket data permanently
+        clientReceiver = new ClientReceiver(preferences.getString(Tools.IP, Tools.DEFAULT_IP), Tools.DEFAULT_SOCKET_RECEIVER_PORT);
 
         // webview to show robot camera stream
         stream = (WebView) findViewById(R.id.stream);
@@ -113,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         joystickRobot.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
-                client.sendCommand(Client.ROBOT + " " + angle + " " + strength);
+                clientSender.sendCommand(ClientSender.ROBOT + " " + angle + " " + strength);
             }
         }, 1000);
 
@@ -122,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         joystickCamera.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
-                client.sendCommand(Client.CAMERA + " " + angle + " " + strength);
+                clientSender.sendCommand(ClientSender.CAMERA + " " + angle + " " + strength);
             }
         }, 1000);
 
@@ -136,9 +139,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // receive socket data permanently
-        client.receiveCommand();
     }
 
     /**
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                     Tools.notifToast("Commande reçue : " + result.get(0) + " - Commande envoyée : " + command);
                     // if no command, tell user, else send it
                     if(command != null && !command.equals(""))
-                        client.sendCommand(command);
+                        clientSender.sendCommand(command);
                     else
                         textToSpeech.speak(getString(R.string.erreur_commande_inconnue), TextToSpeech.QUEUE_ADD, null, null);
                 }
@@ -184,9 +184,13 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && null != data) {
                      if(data.getBooleanExtra(OptionsActivity.SERVER_FLAG, false)) {
                          // creat new socket connection if server has changed
-                         client.stopSocket();
-                         client = new Client(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT),
+                         clientSender.stopSocket();
+                         clientReceiver.stopSocket();
+                         clientSender = new ClientSender(preferences.getString(Tools.IP, Tools.DEFAULT_IP), preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_SENDER_PORT),
                                  preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED));
+                         // receive socket data permanently
+                         clientReceiver = new ClientReceiver(preferences.getString(Tools.IP, Tools.DEFAULT_IP), Tools.DEFAULT_SOCKET_RECEIVER_PORT);
+
                          // reload webview
                          int width = stream.getWidth()-5; // html margin glitch
                          int height = stream.getHeight()-20; // html margin glitch

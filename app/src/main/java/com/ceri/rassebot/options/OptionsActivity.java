@@ -42,7 +42,7 @@ public class OptionsActivity extends AppCompatActivity {
         // set value with preferences data
         ip.setText(preferences.getString(Tools.IP, Tools.DEFAULT_IP));
         port.setText(preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT) + "");
-        socketPort.setText(preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT) + "");
+        socketPort.setText(preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_SENDER_PORT) + "");
         speed.setText(preferences.getInt(Tools.SPEED, Tools.DEFAULT_SPEED) + "");
         welcome.setText(preferences.getString(Tools.WELCOME, Tools.DEFAULT_WELCOME));
 
@@ -59,7 +59,7 @@ public class OptionsActivity extends AppCompatActivity {
                             boolean serverFlag = false;
                             if(!preferences.getString(Tools.IP, Tools.DEFAULT_IP).equals(ip.getText().toString()) ||
                                     preferences.getInt(Tools.PORT, Tools.DEFAULT_PORT) != Integer.parseInt(port.getText().toString()) ||
-                                    preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_PORT) != Integer.parseInt(socketPort.getText().toString()))
+                                    preferences.getInt(Tools.SOCKET_PORT, Tools.DEFAULT_SOCKET_SENDER_PORT) != Integer.parseInt(socketPort.getText().toString()))
                                 serverFlag = true;
 
                             // check user entry errors

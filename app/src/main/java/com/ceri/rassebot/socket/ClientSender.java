@@ -1,9 +1,6 @@
 package com.ceri.rassebot.socket;
 
 import android.os.AsyncTask;
-import android.speech.tts.TextToSpeech;
-
-import com.ceri.rassebot.main.MainActivity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,7 +12,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Client {
+public class ClientSender {
 
     private Socket socket;
     private String ip;
@@ -25,21 +22,16 @@ public class Client {
             ROBOT = "robot", CAMERA = "camera", CAMERA2 = "caméra", AVANCE = "avance", RECULE = "recule", RECULE2 = "recul", ARRIERE = "arrière", STOP = "stop",
             ACCELERE = "accelere", ACCELERE2 = "accélère", RALENTIS = "ralentis", RALENTIS2 = "ralenti", SPEED = "speed";
 
-    public Client(String ip, int port, int speed) {
+    public ClientSender(String ip, int port, int speed) {
         this.ip = ip;
         this.port = port;
         // send default robot speed
-        sendCommand(Client.SPEED + " " + speed);
+        sendCommand(ClientSender.SPEED + " " + speed);
     }
 
     // send command to the server (robot)
     public void sendCommand(String command) {
         new SocketClient().execute(command);
-    }
-
-    // receive command from the server (robot) - opencv objects
-    public void receiveCommand() {
-        new SocketClientReceiver().execute();
     }
 
     // stop socket connection
@@ -80,48 +72,6 @@ public class Client {
                 e.printStackTrace();
             }
             return null;
-        }
-    }
-
-    public class SocketClientReceiver extends AsyncTask<Void, Void, String> {
-
-        protected String doInBackground(Void... args) {
-            String response = "";
-            if(socket == null) {
-                try {
-                    InetAddress serverAddr = InetAddress.getByName(ip);
-                    socket = new Socket(serverAddr, port);
-                } catch (UnknownHostException e1) {
-                    e1.printStackTrace();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            try {
-                System.out.println("Debut ");
-                while (true) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    response = in.readLine();
-                    System.out.println("response: " + response);
-//                    if (response != null && !response.equals("")) {
-//                        MainActivity.textToSpeech.speak(response, TextToSpeech.QUEUE_ADD, null, null);
-//                    }
-                }
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return response;
-        }
-
-        protected void onPostExecute(String result) {
-//            System.out.println("response: " + result);
-//            if (result != null && !result.equals("")) {
-//                MainActivity.textToSpeech.speak(result, TextToSpeech.QUEUE_ADD, null, null);
-//            }
         }
     }
 }
